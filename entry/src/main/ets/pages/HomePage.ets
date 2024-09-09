@@ -4,6 +4,21 @@ import { ClockIn, SearchBox } from '../commons/components'
 export struct HomePage {
   @StorageProp('topHeight') topHeight: number = 0
 
+  @Builder
+  swiperItemBuilder(src: ResourceStr) {
+    Row() {
+      Image(src)
+        .width('100%')
+        .aspectRatio(2.65)
+        .objectFit(ImageFit.Fill)
+    }
+    .width('100%')
+    .padding({
+      left: 16,
+      right: 16
+    })
+  }
+
   build() {
     Column() {
       // 头部
@@ -32,6 +47,32 @@ export struct HomePage {
         left: 16,
         right: 16
       })
+
+      // 轮播图
+      Swiper() {
+        //抽离组件
+        ForEach([
+          $r('app.media.banner_qa'),
+          $r('app.media.banner_pj'),
+          $r('app.media.banner_ai')
+        ], (src: ResourceStr) => {
+          this.swiperItemBuilder(src)
+        })
+      }
+      .margin({
+        top: 16,
+        bottom: 16
+      })
+      .indicator(
+        DotIndicator.dot()
+          .bottom(4)
+          .itemHeight(4)
+          .selectedColor($r('app.color.white'))
+          .selectedItemHeight(4)
+      )
+
+      //日历
+
 
     }
     .width('100%')
