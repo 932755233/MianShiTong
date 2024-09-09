@@ -1,4 +1,4 @@
-import { ClockIn, SearchBox } from '../commons/components'
+import { ClockIn, SearchBox, MyCalendar } from '../commons/components'
 
 @Component
 export struct HomePage {
@@ -72,7 +72,8 @@ export struct HomePage {
       )
 
       //日历
-
+      MyCalendar()
+        .padding(16)
 
     }
     .width('100%')
