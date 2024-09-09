@@ -1,4 +1,5 @@
 import { ClockIn, SearchBox, MyCalendar } from '../commons/components'
+import { HomeCategroy } from '../views/home/HomeCategroy'
 
 @Component
 export struct HomePage {
@@ -74,6 +75,15 @@ export struct HomePage {
       //日历
       MyCalendar()
         .padding(16)
+
+      // 试题分类组件
+      Column() {
+        HomeCategroy()
+
+      }
+      .width('100%')
+      .layoutWeight(1)
+      .backgroundColor($r('app.color.white'))
 
     }
     .width('100%')
