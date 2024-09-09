@@ -20,7 +20,12 @@ export struct HomePage {
         })
 
         // 打卡
-        ClockIn()
+        ClockIn({
+          clockCount: 1
+        })
+          .onClick(() => {
+
+          })
       }
       .width('100%')
       .padding({
