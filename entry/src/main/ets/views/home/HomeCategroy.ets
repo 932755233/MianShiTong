@@ -1,3 +1,5 @@
+import { LevelTag } from '../../commons/components'
+
 export interface QuestionType {
   id: number
   name: string
@@ -46,8 +48,9 @@ export struct HomeCategroy {
       ForEach(this.questionTypeList, (item: QuestionType, index: number) => {
         TabContent() {
           //todo: 列表代码
-
-
+          Column() {
+            LevelTag()
+          }
 
         }.tabBar(this.TabBarBuilder(item, index))
       })
