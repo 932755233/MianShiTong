@@ -1,4 +1,4 @@
-import { LevelTag, QuestionItemComp } from '../../commons/components'
+import { LevelTag, QuestionItemComp, QuestionListComp } from '../../commons/components'
 
 export interface QuestionType {
   id: number
@@ -54,6 +54,7 @@ export struct HomeCategroy {
           //     QuestionItemComp()
           //   })
           // }
+          QuestionListComp()
         }.tabBar(this.TabBarBuilder(item, index))
       })
     }
