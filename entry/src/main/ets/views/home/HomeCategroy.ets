@@ -1,4 +1,4 @@
-import { LevelTag } from '../../commons/components'
+import { LevelTag, QuestionItemComp } from '../../commons/components'
 
 export interface QuestionType {
   id: number
@@ -6,6 +6,7 @@ export interface QuestionType {
   displayNewestFlag: 0 | 1
 }
 
+@Preview
 @Component
 export struct HomeCategroy {
   @State
@@ -47,11 +48,11 @@ export struct HomeCategroy {
     Tabs() {
       ForEach(this.questionTypeList, (item: QuestionType, index: number) => {
         TabContent() {
-          //todo: 列表代码
           Column() {
-            LevelTag()
+            ForEach(new Array(10).fill(1), () => {
+              QuestionItemComp()
+            })
           }
-
         }.tabBar(this.TabBarBuilder(item, index))
       })
     }
