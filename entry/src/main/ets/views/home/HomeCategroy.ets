@@ -48,11 +48,12 @@ export struct HomeCategroy {
     Tabs() {
       ForEach(this.questionTypeList, (item: QuestionType, index: number) => {
         TabContent() {
-          Column() {
-            ForEach(new Array(10).fill(1), () => {
-              QuestionItemComp()
-            })
-          }
+          // 测试代码
+          // Column() {
+          //   ForEach(new Array(10).fill(1), () => {
+          //     QuestionItemComp()
+          //   })
+          // }
         }.tabBar(this.TabBarBuilder(item, index))
       })
     }

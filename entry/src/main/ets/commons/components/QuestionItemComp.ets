@@ -1,4 +1,5 @@
 import { LevelTag } from '.'
+import { QuestionItem } from '../../model'
 
 @Preview
 @Component
@@ -9,25 +10,29 @@ export struct QuestionItemComp {
   // 4.浏览数量
   // 5.是否阅读过
   // 参数过多建议直接传递类
-
+  @Require
+  @Prop
+  item: QuestionItem = {} as QuestionItem
 
   build() {
     Column({ space: 10 }) {
       Row({ space: 10 }) {
-        LevelTag({ difficulty: 1 })
-        Text('如何进行项目介绍如何进行项目介绍如何进行项目介绍如何进行项目介绍')
+        LevelTag({ difficulty: this.item.difficulty })
+        Text(this.item.stem)
           .layoutWeight(1)
           .maxLines(1)
           .textOverflow({ overflow: TextOverflow.Ellipsis })
       }
 
       RowSplit() {
-        Text('点赞4')
+        Text('点赞' + this.item.likeCount)
           .grayText(true)
-        Text('浏览838')
+        Text('浏览' + this.item.views)
           .grayText()
-        Text('已看过')
-          .grayText()
+        if (this.item.readFlag === 1) {
+          Text('已看过')
+            .grayText()
+        }
       }
     }
     .alignItems(HorizontalAlign.Start)
