@@ -5,3 +5,5 @@ export * from './LoggerUtil'
 export * from './FullScreenUtil'
 
 export * from './StatusBarUtil'
+
+export * from './Http'
