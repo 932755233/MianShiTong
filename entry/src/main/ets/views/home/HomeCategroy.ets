@@ -1,4 +1,5 @@
 import { LevelTag, QuestionItemComp, QuestionListComp } from '../../commons/components'
+import { http, logger } from '../../commons/utils'
 
 export interface QuestionType {
   id: number
@@ -10,9 +11,27 @@ export interface QuestionType {
 @Component
 export struct HomeCategroy {
   @State
-  questionTypeList: QuestionType[] = mockData
+  questionTypeList: QuestionType[] = []
   @State
   activeIndex: number = 0
+  controller: TabsController = new TabsController()
+
+  async aboutToAppear() {
+    // http是自己的工具
+    // request是自己封装的方法
+    // <QuestionType[]>是响应结果的类型
+    // string请求参数的类型
+    // method是请求类型，不写默认是get请求
+    // data是post请求时候携带的参数（不出现在url）
+    // param是get请求中拼接到url中的
+    const res = await http.request<QuestionType[], string>({
+      url: 'question/type',
+      method: 'get',
+      data: '123'
+    })
+
+    this.questionTypeList = res
+  }
 
   @Builder
   TabBarBuilder(item: QuestionType, index: number) {
@@ -45,7 +64,7 @@ export struct HomeCategroy {
   }
 
   build() {
-    Tabs() {
+    Tabs({ controller: this.controller }) {
       ForEach(this.questionTypeList, (item: QuestionType, index: number) => {
         TabContent() {
           // 测试代码
@@ -67,14 +86,3 @@ export struct HomeCategroy {
     .divider({ strokeWidth: 0.5, color: $r('app.color.common_gray_border') })
   }
 }
-
-const mockData: QuestionType[] = [
-  { id: 1, name: 'ArkTS', displayNewestFlag: 0 },
-  { id: 2, name: 'ArkUI', displayNewestFlag: 1 },
-  { id: 3, name: 'Hap', displayNewestFlag: 1 },
-  { id: 4, name: 'Hsp', displayNewestFlag: 0 },
-  { id: 5, name: 'Har', displayNewestFlag: 0 },
-  { id: 6, name: 'Ability', displayNewestFlag: 0 },
-  { id: 7, name: 'Stage', displayNewestFlag: 0 },
-  { id: 8, name: 'Kit', displayNewestFlag: 0 }
-]
