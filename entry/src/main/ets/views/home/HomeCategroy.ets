@@ -1,5 +1,5 @@
-import { LevelTag, QuestionItemComp, QuestionListComp } from '../../commons/components'
-import { http, logger } from '../../commons/utils'
+import { QuestionListComp } from '../../commons/components'
+import { http } from '../../commons/utils'
 
 export interface QuestionType {
   id: number
