@@ -1,4 +1,5 @@
-import { QuestionItem } from '../../model'
+import { PageData, QuestionItem, QuestionListParams, SortType } from '../../model'
+import { http } from '../utils'
 import { QuestionItemComp } from './QuestionItemComp'
 
 @Component
@@ -11,36 +12,86 @@ export struct QuestionListComp {
   isFinished: boolean = false
   @State
   list: QuestionItem[] = []
+  // 获取列表的参数
+  @Prop
+  typeId: number
+  @Prop
+  sort: SortType = SortType.Default
+  @State
+  page: number = 1
 
   // 下拉刷新加载
-  onRefresh() {
+  async onRefresh() {
     //模拟加载数据
     this.isLoading = false
     this.isFinished = false
-    setTimeout(() => {
+    this.isRefreshing = true
+    // setTimeout(() => {
+    //
+    //
+    //   this.isRefreshing = false
+    // }, 2000)
+    this.page = 1
+    const res = await this.getQuestionList()
+    this.list = res.rows
+    this.isRefreshing = false
 
+    if (this.page >= res.pageTotal) {
+      this.isFinished = true
+    } else {
+      this.isFinished = false
+      this.page++
+    }
 
-      this.isRefreshing = false
-    }, 2000)
   }
 
+  //list第一次出现的是会跑一下onload，还没加载数据的时候list会认为已经触底了，所以会调用一下这个onload
   // 上拉滚动加载
-  onLoad() {
+  async onLoad() {
     // 为了已经在获取数据中，不去重复拉取数据
     if (this.isLoading || this.isFinished || this.isRefreshing) {
       return
     }
     this.isLoading = true;
-    setTimeout(() => {
-      for (let i = 0; i < 10; i++) {
-        this.list.push({} as QuestionItem)
-      }
-      if (this.list.length > 30) {
-        this.isFinished = true
+    // setTimeout(() => {
+    //   for (let i = 0; i < 10; i++) {
+    //     this.list.push({} as QuestionItem)
+    //   }
+    //   if (this.list.length > 30) {
+    //     this.isFinished = true
+    //
+    //   }
+    //   this.isLoading = false;
+    // }, 2000)
 
-      }
-      this.isLoading = false;
-    }, 2000)
+    const res = await this.getQuestionList()
+    this.list.push(...res.rows)
+    this.isLoading = false;
+    if (this.page >= res.pageTotal) {
+      this.isFinished = true
+    } else {
+      this.isFinished = false
+      this.page++
+    }
+  }
+
+  // 获取列表的方法
+  getQuestionList(): Promise<PageData<QuestionItem>> {
+    return http.request<PageData<QuestionItem>>({
+      url: 'question/list',
+      params: {
+        type: this.typeId,
+        questionBankType: 10,
+        sort: this.sort,
+        page: this.page,
+        pageSize: 10
+      } as QuestionListParams
+    })
+  }
+
+  async aboutToAppear() {
+    const res = await this.getQuestionList()
+
 
   }
 
@@ -69,18 +120,11 @@ export struct QuestionListComp {
   build() {
     // 1.下拉刷新
     // 2.上拉加载
-    Refresh({ refreshing: $$this.isRefreshing }) {
+    Refresh({ refreshing: this.isRefreshing }) {
       List() {
-        ForEach(new Array(10).fill(1), () => {
+        ForEach(this.list, (item: QuestionItem) => {
           QuestionItemComp({
-            item: {
-              id: '100',
-              stem: '请说下ArkUI的容器组件有哪些？',
-              difficulty: 3,
-              likeCount: 23,
-              views: 423,
-              readFlag: 1
-            }
+            item
           })
         })
         //loading的展示

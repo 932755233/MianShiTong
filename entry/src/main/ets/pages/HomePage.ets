@@ -37,7 +37,7 @@ export struct HomePage {
 
         // 打卡
         ClockIn({
-          clockCount: 1
+          clockCount: 2
         })
           .onClick(() => {
 
@@ -79,7 +79,6 @@ export struct HomePage {
       // 试题分类组件
       Column() {
         HomeCategroy()
-
       }
       .width('100%')
       .layoutWeight(1)

@@ -39,6 +39,10 @@ export struct QuestionItemComp {
     .justifyContent(FlexAlign.Center)
     .width('100%')
     .height(80)
+    .padding({
+      left: 16,
+      right: 16
+    })
   }
 }
 

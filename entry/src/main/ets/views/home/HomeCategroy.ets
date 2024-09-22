@@ -14,9 +14,12 @@ export struct HomeCategroy {
   questionTypeList: QuestionType[] = []
   @State
   activeIndex: number = 0
+  @State
+  isShow: boolean = false
   controller: TabsController = new TabsController()
 
-  async aboutToAppear() {
+  // 这样写比较符合规范
+  async getQuestionTypeList() {
     // http是自己的工具
     // request是自己封装的方法
     // <QuestionType[]>是响应结果的类型
@@ -31,6 +34,12 @@ export struct HomeCategroy {
     })
 
     this.questionTypeList = res
+  }
+
+  aboutToAppear() {
+    this.getQuestionTypeList()
+
+
   }
 
   @Builder
@@ -64,25 +73,34 @@ export struct HomeCategroy {
   }
 
   build() {
-    Tabs({ controller: this.controller }) {
-      ForEach(this.questionTypeList, (item: QuestionType, index: number) => {
-        TabContent() {
-          // 测试代码
-          // Column() {
-          //   ForEach(new Array(10).fill(1), () => {
-          //     QuestionItemComp()
-          //   })
-          // }
-          QuestionListComp()
-        }.tabBar(this.TabBarBuilder(item, index))
+    Stack({ alignContent: Alignment.TopEnd }) {
+      Tabs({ controller: this.controller }) {
+        ForEach(this.questionTypeList, (item: QuestionType, index: number) => {
+          TabContent() {
+            QuestionListComp({
+              typeId: item.id
+            })
+          }.tabBar(this.TabBarBuilder(item, index))
+        })
+      }
+      .onTabBarClick((index: number) => {
+        this.activeIndex = index;
       })
+      .barMode(BarMode.Scrollable)
+      .barHeight(44)
+      .scrollable(false)
+      .divider({ strokeWidth: 0.5, color: $r('app.color.common_gray_border') })
+
+      Row() {
+        Image($r('app.media.ic_home_filter'))
+          .width(24)
+          .aspectRatio(1)
+      }
+      .width(56)
+      .height(44)
+      .justifyContent(FlexAlign.Center)
+      .linearGradient({ angle: 90, colors: [['#00ffffff', 0], ['#ffffff', 0.285]] })
+      // .bindSheet($$this.isShow)
     }
-    .onTabBarClick((index: number) => {
-      this.activeIndex = index;
-    })
-    .barMode(BarMode.Scrollable)
-    .barHeight(44)
-    .scrollable(false)
-    .divider({ strokeWidth: 0.5, color: $r('app.color.common_gray_border') })
   }
 }
