@@ -1,5 +1,7 @@
 import { QuestionListComp } from '../../commons/components'
 import { http } from '../../commons/utils'
+import { faceDetector } from '@kit.CoreVisionKit'
+import { SortType } from '../../model'
 
 export interface QuestionType {
   id: number
@@ -12,8 +14,14 @@ export interface QuestionType {
 export struct HomeCategroy {
   @State
   questionTypeList: QuestionType[] = []
-  @State
+  @State //当前显示的分类
   activeIndex: number = 0
+  @State //当前默认的排序
+  sort: SortType = SortType.Default
+  @State //排序的索引
+  filterIndex: number = 0
+  @State //排序的索引
+  filterSort: number = 0
   @State
   isShow: boolean = false
   controller: TabsController = new TabsController()
@@ -40,6 +48,105 @@ export struct HomeCategroy {
     this.getQuestionTypeList()
 
 
+  }
+
+  @Builder
+  FilterSheetBuilder() {
+    Column() {
+      Row() {
+        Text('重置')
+          .fontSize(16)
+          .fontWeight(500)
+          .fontColor($r('app.color.common_gray_03'))
+          .onClick(() => {
+            this.filterSort = SortType.Default
+            this.filterIndex = 0
+          })
+        Text('筛选题目')
+          .layoutWeight(1)
+          .fontSize(18)
+          .fontWeight(500)
+          .fontColor($r('app.color.black'))
+          .textAlign(TextAlign.Center)
+        Text('完成')
+          .fontWeight(500)
+          .fontSize(16)
+          .fontColor($r('app.color.common_main_color'))
+          .onClick(() => {
+            this.isShow = false
+            this.activeIndex = this.filterIndex
+            this.controller.changeIndex(this.activeIndex)
+            this.sort = this.filterSort
+          })
+      }
+      .margin({
+        bottom: 4,
+        top: 4
+      })
+
+      Text('题目排序')
+        .textTitle()
+      Flex({ wrap: FlexWrap.Wrap }) {
+        FilterButton({
+          text: '默认',
+          isSelected: this.filterSort === SortType.Default,
+          sort: this.filterSort
+        })
+          .onClick(() => {
+            this.filterSort = SortType.Default
+          })
+
+        FilterButton({
+          text: '浏览量',
+          isSort: true,
+          isSelected: this.filterSort === SortType.ViewLow || this.filterSort === SortType.ViewHigh,
+          sort: this.filterSort
+        })
+          .onClick(() => {
+            this.filterSort = this.filterSort === SortType.ViewLow ? SortType.ViewHigh : SortType.ViewLow
+          })
+
+        FilterButton({
+          text: '难度',
+          isSort: true,
+          isSelected: this.filterSort === SortType.DifficultyLow || this.filterSort === SortType.DifficultyHigh,
+          sort: this.filterSort
+        })
+          .onClick(() => {
+            this.filterSort = this.filterSort === SortType.DifficultyLow ? SortType.DifficultyHigh : SortType.DifficultyLow
+
+          })
+
+        FilterButton({
+          text: '推荐',
+          isSelected: this.filterSort === SortType.Commend,
+          sort: this.filterSort
+        })
+          .onClick(() => {
+            this.filterSort = SortType.Commend
+          })
+
+      }
+
+      Text('选择分类')
+        .textTitle()
+      Flex({ wrap: FlexWrap.Wrap }) {
+        ForEach(this.questionTypeList, (item: QuestionType, i: number) => {
+          FilterButton({
+            text: item.name,
+            isNew: item.displayNewestFlag === 1,
+            isSelected: i === this.filterIndex
+          })
+            .onClick(() => {
+              this.filterIndex = i
+            })
+        })
+      }
+
+    }
+    .padding(16)
+    .backgroundColor($r('app.color.white'))
+    .height('100%')
   }
 
   @Builder
@@ -78,13 +185,17 @@ export struct HomeCategroy {
         ForEach(this.questionTypeList, (item: QuestionType, index: number) => {
           TabContent() {
             QuestionListComp({
-              typeId: item.id
+              typeId: item.id,
+              sort: this.sort,
+              activeIndex: this.activeIndex,
+              index: index
             })
           }.tabBar(this.TabBarBuilder(item, index))
         })
       }
       .onTabBarClick((index: number) => {
         this.activeIndex = index;
+        this.filterIndex = index;
       })
       .barMode(BarMode.Scrollable)
       .barHeight(44)
@@ -100,7 +211,65 @@ export struct HomeCategroy {
       .height(44)
       .justifyContent(FlexAlign.Center)
       .linearGradient({ angle: 90, colors: [['#00ffffff', 0], ['#ffffff', 0.285]] })
-      // .bindSheet($$this.isShow)
+      .bindSheet($$this.isShow, this.FilterSheetBuilder(), {
+        showClose: false,
+        height: 400
+      })
+      .onClick(() => {
+        this.isShow = true;
+      })
     }
+  }
+}
+
+@Extend(Text)
+function textTitle() {
+  .fontSize(14)
+  .fontWeight(500)
+  .fontColor($r('app.color.black'))
+  .width('100%')
+  .margin({ top: 20 })
+}
+
+@Preview
+@Component
+struct FilterButton {
+  text: string = ''
+  isNew: boolean = false
+  isSort: boolean = false
+  @Prop isSelected: boolean = false
+  @Prop sort: SortType = SortType.Default
+
+  build() {
+    Row() {
+      Text(this.text)
+        .fontSize(12)
+        .fontColor(this.isSelected ? $r('app.color.common_main_color') : $r('app.color.black'))
+      if (this.isNew) {
+        Image($r('app.media.ic_home_new'))
+          .width(32)
+          .height(14)
+          .objectFit(ImageFit.Contain)
+          .position({ right: -26, top: -7 })
+      }
+      if (this.isSort) {
+        Column() {
+          Image($r('sys.media.ohos_ic_public_arrow_up'))
+            .size({ width: 12, height: 6 })
+            .fillColor(this.isSelected && this.sort % 2 === 0 ? $r('app.color.common_main_color') :
+            $r('app.color.black'))
+          Image($r('sys.media.ohos_ic_public_arrow_down'))
+            .size({ width: 12, height: 6 })
+            .fillColor(this.isSelected && this.sort % 2 === 1 ? $r('app.color.common_main_color') :
+            $r('app.color.black'))
+        }
+        .margin({ top: -0.5, left: 2 })
+      }
+    }
+    .height(30)
+    .padding({ left: 10, right: 10 })
+    .backgroundColor($r('app.color.common_gray_bg'))
+    .borderRadius(4)
+    .margin({ top: 12, right: this.isNew ? 26 : 10 })
   }
 }

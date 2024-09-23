@@ -16,9 +16,20 @@ export struct QuestionListComp {
   @Prop
   typeId: number
   @Prop
+  activeIndex: number
+  @Prop
+  index: number
+  @Prop
+  @Watch('onChangeSort')
   sort: SortType = SortType.Default
   @State
   page: number = 1
+
+  onChangeSort() {
+    if (this.activeIndex === this.index) {
+      this.isRefreshing = true
+    }
+  }
 
   // 下拉刷新加载
   async onRefresh() {
@@ -123,9 +134,11 @@ export struct QuestionListComp {
     Refresh({ refreshing: this.isRefreshing }) {
       List() {
         ForEach(this.list, (item: QuestionItem) => {
-          QuestionItemComp({
-            item
-          })
+          ListItem() {
+            QuestionItemComp({
+              item
+            })
+          }
         })
         //loading的展示
         this.LoadMoreBuilder()
