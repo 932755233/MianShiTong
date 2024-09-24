@@ -1,6 +1,5 @@
-import { QuestionListComp } from '../../commons/components'
+import { QuestionListComp, Skeleton, SkeletonItem } from '../../commons/components'
 import { http } from '../../commons/utils'
-import { faceDetector } from '@kit.CoreVisionKit'
 import { SortType } from '../../model'
 
 export interface QuestionType {
@@ -24,6 +23,8 @@ export struct HomeCategroy {
   filterSort: number = 0
   @State
   isShow: boolean = false
+  @State
+  loading: boolean = false
   controller: TabsController = new TabsController()
 
   // 这样写比较符合规范
@@ -35,6 +36,7 @@ export struct HomeCategroy {
     // method是请求类型，不写默认是get请求
     // data是post请求时候携带的参数（不出现在url）
     // param是get请求中拼接到url中的
+    this.loading = true
     const res = await http.request<QuestionType[], string>({
       url: 'question/type',
       method: 'get',
@@ -42,12 +44,42 @@ export struct HomeCategroy {
     })
 
     this.questionTypeList = res
+    setTimeout(() => {
+      // this.loading = false
+
+    }, 3000)
   }
 
   aboutToAppear() {
     this.getQuestionTypeList()
+  }
 
+  @Builder
+  SkeletonBuilder() {
+    Skeleton() {
+      Column() {
+        Row({ space: 16 }) {
+          SkeletonItem({ widthValue: 60 })
+          SkeletonItem({ widthValue: 100 })
+          SkeletonItem({ widthValue: 80 })
+          SkeletonItem({ widthValue: 40 })
+        }
+        .height(44)
+        .width('100%')
 
+        ForEach([1, 2, 3, 4, 5, 6], () => {
+          Column({ space: 10 }) {
+            SkeletonItem({ widthValue: '90%' })
+            SkeletonItem({ widthValue: '45%' })
+          }
+          .height(80)
+          .width('100%')
+          .alignItems(HorizontalAlign.Start)
+          .justifyContent(FlexAlign.Center)
+        })
+      }
+      .padding({ left: 16, right: 16 })
+    }
   }
 
   @Builder
@@ -113,8 +145,8 @@ export struct HomeCategroy {
           sort: this.filterSort
         })
           .onClick(() => {
-            this.filterSort = this.filterSort === SortType.DifficultyLow ? SortType.DifficultyHigh : SortType.DifficultyLow
-
+            this.filterSort =
+              this.filterSort === SortType.DifficultyLow ? SortType.DifficultyHigh : SortType.DifficultyLow
           })
 
         FilterButton({
@@ -180,44 +212,48 @@ export struct HomeCategroy {
   }
 
   build() {
-    Stack({ alignContent: Alignment.TopEnd }) {
-      Tabs({ controller: this.controller }) {
-        ForEach(this.questionTypeList, (item: QuestionType, index: number) => {
-          TabContent() {
-            QuestionListComp({
-              typeId: item.id,
-              sort: this.sort,
-              activeIndex: this.activeIndex,
-              index: index
-            })
-          }.tabBar(this.TabBarBuilder(item, index))
+    if (this.loading) {
+      this.SkeletonBuilder()
+    } else {
+      Stack({ alignContent: Alignment.TopEnd }) {
+        Tabs({ controller: this.controller }) {
+          ForEach(this.questionTypeList, (item: QuestionType, index: number) => {
+            TabContent() {
+              QuestionListComp({
+                typeId: item.id,
+                sort: this.sort,
+                activeIndex: this.activeIndex,
+                index: index
+              })
+            }.tabBar(this.TabBarBuilder(item, index))
+          })
+        }
+        .onTabBarClick((index: number) => {
+          this.activeIndex = index;
+          this.filterIndex = index;
+        })
+        .barMode(BarMode.Scrollable)
+        .barHeight(44)
+        .scrollable(false)
+        .divider({ strokeWidth: 0.5, color: $r('app.color.common_gray_border') })
+
+        Row() {
+          Image($r('app.media.ic_home_filter'))
+            .width(24)
+            .aspectRatio(1)
+        }
+        .width(56)
+        .height(44)
+        .justifyContent(FlexAlign.Center)
+        .linearGradient({ angle: 90, colors: [['#00ffffff', 0], ['#ffffff', 0.285]] })
+        .bindSheet($$this.isShow, this.FilterSheetBuilder(), {
+          showClose: false,
+          height: 400
+        })
+        .onClick(() => {
+          this.isShow = true;
         })
       }
-      .onTabBarClick((index: number) => {
-        this.activeIndex = index;
-        this.filterIndex = index;
-      })
-      .barMode(BarMode.Scrollable)
-      .barHeight(44)
-      .scrollable(false)
-      .divider({ strokeWidth: 0.5, color: $r('app.color.common_gray_border') })
-
-      Row() {
-        Image($r('app.media.ic_home_filter'))
-          .width(24)
-          .aspectRatio(1)
-      }
-      .width(56)
-      .height(44)
-      .justifyContent(FlexAlign.Center)
-      .linearGradient({ angle: 90, colors: [['#00ffffff', 0], ['#ffffff', 0.285]] })
-      .bindSheet($$this.isShow, this.FilterSheetBuilder(), {
-        showClose: false,
-        height: 400
-      })
-      .onClick(() => {
-        this.isShow = true;
-      })
     }
   }
 }
@@ -231,7 +267,6 @@ function textTitle() {
   .margin({ top: 20 })
 }
 
-@Preview
 @Component
 struct FilterButton {
   text: string = ''
