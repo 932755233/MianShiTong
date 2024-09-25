@@ -179,11 +179,13 @@ export struct MinePage {
       .backgroundColor($r('app.color.white'))
       .borderRadius(8)
 
-      Button('退出登录')
-        .onClick(() => {
-          //todo
+      if (false){
+        Button('退出登录')
+          .onClick(() => {
+            //todo
 
-        })
+          })
+      }
     }
     .padding(16)
     .backgroundColor($r('app.color.common_gray_bg'))
