@@ -1,20 +1,22 @@
-@Preview
 @Component
 export struct Skeleton {
+  @State
+  opacityValue: number = 1
+
   @Builder
   defaultBuilder() {
   }
 
   @BuilderParam
   defaultParam: () => void = this.defaultBuilder
-  @State
-  opacityValue: number = 1
 
   build() {
     Row({ space: 6 }) {
       // 占位的结构
-      this.defaultParam
+      this.defaultParam()
     }
+    .height(50)
+    .width('100%')
     .opacity(this.opacityValue)
     .animation({
       duration: 600,

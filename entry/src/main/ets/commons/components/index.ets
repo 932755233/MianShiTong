@@ -9,7 +9,3 @@ export * from './LevelTag'
 export * from './QuestionItemComp'
 
 export * from './QuestionListComp'
-
-export * from './SkeletonItem'
-
-export * from './Skeleton'

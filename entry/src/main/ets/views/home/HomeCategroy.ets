@@ -1,4 +1,6 @@
-import { QuestionListComp, Skeleton, SkeletonItem } from '../../commons/components'
+import { QuestionListComp } from '../../commons/components'
+import { Skeleton } from '../../commons/components/Skeleton'
+import { SkeletonItem } from '../../commons/components/SkeletonItem'
 import { http } from '../../commons/utils'
 import { SortType } from '../../model'
 
@@ -45,9 +47,8 @@ export struct HomeCategroy {
 
     this.questionTypeList = res
     setTimeout(() => {
-      // this.loading = false
-
-    }, 3000)
+      this.loading = false
+    }, 5000)
   }
 
   aboutToAppear() {
