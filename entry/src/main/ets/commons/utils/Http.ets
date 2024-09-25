@@ -22,7 +22,7 @@ const instance = axios.create({
 //   请求发送到服务器之前的一次拦截 - 设置请求配置信息               请求拦截器
 //   收到服务器响应结果响应之前的一次拦截 - 数据的处理，异常处理       响应拦截器
 instance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  //TODO:携带登录信息
+  // 携带登录信息
   return config
 }, (err: Error) => {
   promptAction.showToast({
@@ -32,7 +32,7 @@ instance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
 })
 
 instance.interceptors.response.use((res: AxiosResponse) => {
-  //todo: 返回数据的加工
+  // 返回数据的加工
   // 1.接口调通了
   // 业务成功/业务失败
   // 返回成功结果 - 返回错误结果
