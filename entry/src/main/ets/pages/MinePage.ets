@@ -128,17 +128,17 @@ export struct MinePage {
       GridRow({ columns: 4 }) {
         this.navBuilder({
           icon: $r('app.media.ic_mine_history'), name: '历史记录', onClick: () => {
-            //todo
+            //todo：历史记录
           }
         })
         this.navBuilder({
           icon: $r('app.media.ic_mine_collect'), name: '我的收藏', onClick: () => {
-            //todo
+            //todo：我的收藏
           }
         })
         this.navBuilder({
           icon: $r('app.media.ic_mine_like'), name: '我的点赞', onClick: () => {
-            //todo
+            //todo：我的点赞
           }
         })
         this.navBuilder({
@@ -146,7 +146,7 @@ export struct MinePage {
           name: '累计学时',
           other: '10小时',
           onClick: () => {
-            //todo
+            //todo：累计学时
           }
         })
       }
@@ -159,7 +159,7 @@ export struct MinePage {
           icon: $r('app.media.ic_mine_notes'),
           name: '开发常用词',
           onClick: () => {
-            //todo
+            //todo：开发常用词
 
           }
         })
@@ -171,7 +171,7 @@ export struct MinePage {
           icon: $r('app.media.ic_mine_setting'),
           name: '设置',
           onClick: () => {
-            //todo
+            //todo：设置
 
           }
         })
@@ -182,7 +182,7 @@ export struct MinePage {
       if (false){
         Button('退出登录')
           .onClick(() => {
-            //todo
+            //todo：退出登录按钮
 
           })
       }
