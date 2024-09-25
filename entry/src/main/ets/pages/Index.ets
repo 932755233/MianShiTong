@@ -40,7 +40,7 @@ struct Index {
     },
   ]
   @State
-  activeIndex: number = 0
+  activeIndex: number = 3
 
   @Builder
   TabBarBuilder(item: TabItem, index: number) {
@@ -58,7 +58,7 @@ struct Index {
   build() {
     Column() {
       // 放置tabs组件
-      Tabs() {
+      Tabs({ index: this.activeIndex }) {
         ForEach(this.tabList, (item: TabItem, index: number) => {
           TabContent() {
             // 每一页的内容
