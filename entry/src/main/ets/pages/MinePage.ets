@@ -132,17 +132,17 @@ export struct MinePage {
           }
         })
         this.navBuilder({
-          icon: $r('app.media.ic_mine_history'), name: '我的收藏', onClick: () => {
+          icon: $r('app.media.ic_mine_collect'), name: '我的收藏', onClick: () => {
             //todo
           }
         })
         this.navBuilder({
-          icon: $r('app.media.ic_mine_history'), name: '我的点赞', onClick: () => {
+          icon: $r('app.media.ic_mine_like'), name: '我的点赞', onClick: () => {
             //todo
           }
         })
         this.navBuilder({
-          icon: $r('app.media.ic_mine_history'),
+          icon: $r('app.media.ic_mine_study'),
           name: '累计学时',
           other: '10小时',
           onClick: () => {
