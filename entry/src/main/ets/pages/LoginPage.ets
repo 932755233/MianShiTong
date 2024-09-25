@@ -1,18 +1,23 @@
+import { NavBar } from '../commons/components/NavBar'
+
 @Entry
 @Component
 struct LoginPage {
-  @State message: string = '登录界面';
+  @StorageProp('topHeight')
+  topHeight: number = 0
+  @State
+  mobile: string = 'hmheima'
+  @State
+  code: string = 'Hmheima%123'
+  @State
+  isAgree: boolean = false
+  @State
+  loading: boolean = false
 
   build() {
-    RelativeContainer() {
-      Text(this.message)
-        .id('LoginPageHelloWorld')
-        .fontSize(50)
-        .fontWeight(FontWeight.Bold)
-        .alignRules({
-          center: { anchor: '__container__', align: VerticalAlign.Center },
-          middle: { anchor: '__container__', align: HorizontalAlign.Center }
-        })
+    Column() {
+      NavBar({ showRightIcon: false })
+
     }
     .height('100%')
     .width('100%')
