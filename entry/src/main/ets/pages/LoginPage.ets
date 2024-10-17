@@ -1,4 +1,8 @@
 import { NavBar } from '../commons/components/NavBar'
+import { PromptAction } from '@ohos.arkui.UIContext'
+import { promptAction, router } from '@kit.ArkUI'
+import { http, logger } from '../commons/utils'
+import { LoginParams, User } from '../model'
 
 @Entry
 @Component
@@ -15,6 +19,39 @@ struct LoginPage {
   isAgree: boolean = false
   @State
   loading: boolean = false
+
+  async login() {
+    if (this.loading) {
+      return
+    }
+    if (!this.mobile) {
+      return promptAction.showToast({
+        message: '请输入用户名'
+      })
+    }
+    if (!this.code) {
+      return promptAction.showToast({
+        message: '请输入密码'
+      })
+    }
+    if (!this.isAgree) {
+      return promptAction.showToast({
+        message: '请阅读并勾选用户协议'
+      })
+    }
+    this.loading = true;
+    const user = await http.request<User, LoginParams>({
+      url: '/login',
+      method: 'post',
+      data: {
+        username: this.mobile,
+        password: this.code
+      }
+    })
+    AppStorage.setOrCreate('user', user)
+    this.loading = false
+    router.back()
+  }
 
   build() {
     Column() {
@@ -88,8 +125,8 @@ struct LoginPage {
         })
         .stateEffect(false)
         .onClick(() => {
-          //todo:登录按钮点击事件
-
+          //登录按钮点击事件
+          this.login()
         })
       }
       .padding({ left: 36, right: 36, top: 30 })

@@ -1,6 +1,7 @@
 import { router } from "@kit.ArkUI"
 import { ClockIn } from "../commons/components"
-import { statusBarUtil } from "../commons/utils"
+import { formatTime, statusBarUtil } from "../commons/utils"
+import { User } from "../model"
 
 interface Nav {
   icon: ResourceStr
@@ -20,6 +21,8 @@ interface Tool {
 export struct MinePage {
   @StorageProp('topHeight')
   topHeight: number = 0
+  @StorageProp('user')
+  user: User = {} as User
 
   @Builder
   navBuilder(nav: Nav) {
@@ -82,15 +85,15 @@ export struct MinePage {
   build() {
     Column({ space: 16 }) {
       Row({ space: 12 }) {
-        Image($r('app.media.ic_mine_avatar'))
+        Image(this.user.avatar || $r('app.media.ic_mine_avatar'))
           .alt($r('app.media.ic_mine_avatar'))
           .width(55)
           .aspectRatio(1)
           .borderRadius(55)
         //是否登录
-        if (false) {
+        if (this.user.token) {
           Column({ space: 4 }) {
-            Text('用户名')
+            Text(this.user.username || this.user.nickName)
               .fontSize(18)
               .fontWeight(500)
               .maxLines(1)
@@ -119,7 +122,7 @@ export struct MinePage {
             })
         }
 
-        ClockIn({ clockCount: 2 })
+        ClockIn({ clockCount: this.user.clockinNumbers || 0 })
       }
       .width('100%')
       .height(100)
@@ -144,7 +147,7 @@ export struct MinePage {
         this.navBuilder({
           icon: $r('app.media.ic_mine_study'),
           name: '累计学时',
-          other: '10小时',
+          other: formatTime(this.user.totalTime || 0),
           onClick: () => {
             //todo：累计学时
           }
@@ -163,7 +166,13 @@ export struct MinePage {
 
           }
         })
-        this.toolsBuilder({ icon: $r('app.media.ic_mine_ai'), name: '面通AI' })
+        this.toolsBuilder({
+          icon: $r('app.media.ic_mine_ai'),
+          name: '面通AI',
+          onClick: () => {
+            router.pushUrl({ url: 'pages/SocketAI' })
+          }
+        })
         this.toolsBuilder({ icon: $r('app.media.ic_mine_invite'), name: '推荐分享' })
         this.toolsBuilder({ icon: $r('app.media.ic_mine_file'), name: '意见反馈' })
         this.toolsBuilder({ icon: $r('app.media.ic_mine_info'), name: '关于我们' })
@@ -179,11 +188,11 @@ export struct MinePage {
       .backgroundColor($r('app.color.white'))
       .borderRadius(8)
 
-      if (false){
+      if (this.user.token) {
         Button('退出登录')
           .onClick(() => {
             //todo：退出登录按钮
-
+            AppStorage.setOrCreate('user', {})
           })
       }
     }
@@ -194,8 +203,9 @@ export struct MinePage {
     })
     .width('100%')
     .height('100%')
-    .onVisibleAreaChange([0, 1], (isVisible) => {
-      if (isVisible) {
+    .onVisibleAreaChange([0, 1], (isShow) => {
+      // 当前控件显示的时候会调用
+      if (isShow) {
         statusBarUtil.setLightBar()
       } else {
         statusBarUtil.setDarkBar()

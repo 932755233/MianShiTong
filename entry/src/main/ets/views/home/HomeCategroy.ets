@@ -48,7 +48,7 @@ export struct HomeCategroy {
     this.questionTypeList = res
     setTimeout(() => {
       this.loading = false
-    }, 5000)
+    }, 1000)
   }
 
   aboutToAppear() {
