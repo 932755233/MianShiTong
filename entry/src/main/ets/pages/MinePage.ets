@@ -1,6 +1,7 @@
 import { router } from "@kit.ArkUI"
 import { ClockIn } from "../commons/components"
 import { formatTime, statusBarUtil } from "../commons/utils"
+import { UserStoreKey } from "../commons/utils/Auth"
 import { User } from "../model"
 
 interface Nav {
@@ -16,12 +17,12 @@ interface Tool {
   value?: string
   onClick?: () => void
 }
-
+@Preview
 @Component
 export struct MinePage {
   @StorageProp('topHeight')
   topHeight: number = 0
-  @StorageProp('user')
+  @StorageProp(UserStoreKey)
   user: User = {} as User
 
   @Builder

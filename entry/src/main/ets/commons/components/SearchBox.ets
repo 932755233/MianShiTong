@@ -1,3 +1,4 @@
+@Preview
 @Component
 export struct SearchBox {
 

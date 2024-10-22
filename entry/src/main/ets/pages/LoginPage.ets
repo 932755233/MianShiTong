@@ -3,6 +3,7 @@ import { PromptAction } from '@ohos.arkui.UIContext'
 import { promptAction, router } from '@kit.ArkUI'
 import { http, logger } from '../commons/utils'
 import { LoginParams, User } from '../model'
+import { auth } from '../commons/utils/Auth'
 
 @Entry
 @Component
@@ -48,7 +49,9 @@ struct LoginPage {
         password: this.code
       }
     })
-    AppStorage.setOrCreate('user', user)
+    logger.info(JSON.stringify(user))
+    // AppStorage.setOrCreate('user', user)
+    auth.setUser(user)
     this.loading = false
     router.back()
   }

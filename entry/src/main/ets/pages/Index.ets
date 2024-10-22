@@ -1,8 +1,13 @@
 import { statusBarUtil } from '../commons/utils';
+import { auth } from '../commons/utils/Auth';
 import { HomePage } from './HomePage';
 import { InterviewPage } from './InterviewPage';
 import { MinePage } from './MinePage';
 import { ProjectPage } from './ProjectPage';
+
+// UI结构已经有了，满足persistentStorege
+// 加载页面前就会执行的
+auth.initUser()
 
 // 数据结构定义
 interface TabItem {
@@ -40,7 +45,7 @@ struct Index {
     },
   ]
   @State
-  activeIndex: number = 3
+  activeIndex: number = 0
 
   @Builder
   TabBarBuilder(item: TabItem, index: number) {

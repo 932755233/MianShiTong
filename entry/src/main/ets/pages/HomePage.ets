@@ -1,9 +1,13 @@
 import { ClockIn, SearchBox, MyCalendar } from '../commons/components'
+import { UserStoreKey } from '../commons/utils/Auth'
+import { User } from '../model'
 import { HomeCategroy } from '../views/home/HomeCategroy'
 
 @Component
 export struct HomePage {
   @StorageProp('topHeight') topHeight: number = 0
+  @StorageProp(UserStoreKey)
+  user: User = {} as User
 
   @Builder
   swiperItemBuilder(src: ResourceStr) {
@@ -37,7 +41,7 @@ export struct HomePage {
 
         // 打卡
         ClockIn({
-          clockCount: 2
+          clockCount: this.user.clockinNumbers
         })
           .onClick(() => {
 
