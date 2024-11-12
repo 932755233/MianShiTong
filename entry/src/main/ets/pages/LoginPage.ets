@@ -4,6 +4,7 @@ import { promptAction, router } from '@kit.ArkUI'
 import { http, logger } from '../commons/utils'
 import { LoginParams, User } from '../model'
 import { auth } from '../commons/utils/Auth'
+import { emitter } from '@kit.BasicServicesKit'
 
 @Entry
 @Component
@@ -49,10 +50,17 @@ struct LoginPage {
         password: this.code
       }
     })
+    this.loading = false
+
     logger.info(JSON.stringify(user))
     // AppStorage.setOrCreate('user', user)
     auth.setUser(user)
-    this.loading = false
+    // HomeCategroy接收
+    // 发送 - 线程内 - eventHub
+    // getContext().eventHub.emit('13166669999')
+    // 发送 - 线程间 - emitter
+    emitter.emit('13166669999')
+
     router.back()
   }
 

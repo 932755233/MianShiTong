@@ -3,6 +3,7 @@ import { Skeleton } from '../../commons/components/Skeleton'
 import { SkeletonItem } from '../../commons/components/SkeletonItem'
 import { http } from '../../commons/utils'
 import { SortType } from '../../model'
+import { emitter } from '@kit.BasicServicesKit'
 
 export interface QuestionType {
   id: number
@@ -53,6 +54,17 @@ export struct HomeCategroy {
 
   aboutToAppear() {
     this.getQuestionTypeList()
+    // LoginPage发送
+    // 需要订阅 - 保证自己能更新
+    // 接收 - 线程内 - eventHub
+    // getContext().eventHub.on('13166669999', () => {
+    //   this.getQuestionTypeList()
+    // })
+    // 接收 - 线程间 - emitter
+    emitter.on('13166669999', () => {
+      this.getQuestionTypeList()
+    })
+
   }
 
   @Builder

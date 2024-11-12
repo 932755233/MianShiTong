@@ -1,6 +1,6 @@
 import { router } from "@kit.ArkUI"
 import { ClockIn } from "../commons/components"
-import { formatTime, statusBarUtil } from "../commons/utils"
+import { formatTime, http, logger, statusBarUtil } from "../commons/utils"
 import { UserStoreKey } from "../commons/utils/Auth"
 import { User } from "../model"
 
@@ -17,6 +17,7 @@ interface Tool {
   value?: string
   onClick?: () => void
 }
+
 @Preview
 @Component
 export struct MinePage {
@@ -191,9 +192,16 @@ export struct MinePage {
 
       if (this.user.token) {
         Button('退出登录')
-          .onClick(() => {
+          .onClick(async () => {
             //todo：退出登录按钮
-            AppStorage.setOrCreate('user', {})
+            AppStorage.setOrCreate(UserStoreKey, {} as User)
+            // const res = await http.request<string>({
+            //   url: 'studyInfo',
+            //   // headers: {
+            //   //   Authorization: `Bearer ${this.user.token}`
+            //   // }
+            // })
+            // logger.info(JSON.stringify(res))
           })
       }
     }

@@ -1,6 +1,8 @@
-import axios, { AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from '@ohos/axios'
-import { promptAction } from '@kit.ArkUI'
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from '@ohos/axios'
+import { promptAction, router } from '@kit.ArkUI'
 import { logger } from '.'
+import { auth, UserStoreKey } from './Auth'
+import { User } from '../../model'
 
 interface Res<T> {
   success: boolean
@@ -21,8 +23,15 @@ const instance = axios.create({
 // 拦截器：
 //   请求发送到服务器之前的一次拦截 - 设置请求配置信息               请求拦截器
 //   收到服务器响应结果响应之前的一次拦截 - 数据的处理，异常处理       响应拦截器
+// 请求拦截器
 instance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   // 携带登录信息
+  const user = auth.getUser()
+  if (user.token) {
+    // 添加token
+    config.headers.Authorization = `Bearer ${user.token}`
+  }
+
   return config
 }, (err: Error) => {
   promptAction.showToast({
@@ -31,6 +40,7 @@ instance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   return Promise.reject(err)
 })
 
+// 响应拦截器
 instance.interceptors.response.use((res: AxiosResponse) => {
   // 返回数据的加工
   // 1.接口调通了
@@ -45,7 +55,22 @@ instance.interceptors.response.use((res: AxiosResponse) => {
   }
 
   return Promise.reject(new Error(JSON.stringify(res.data) + '---zzy'))
-}, (err: Error) => {
+}, (err: AxiosError) => {
+  // 401登录失效
+  if (err.response?.status === 401) {
+    // 提示：登录失效
+    promptAction.showToast({
+      message: '登录失效，请重新登陆'
+    })
+
+    // 重新登陆，删除无效token
+    auth.setUser({} as User)
+    // 跳转登录页面（历史记录只有一个登录页面）
+    router.pushUrl({
+      url: 'pages/LoginPage'
+    }, router.RouterMode.Single)
+    return
+  }
   promptAction.showToast({
     message: '响应错误：' + err.message
   })

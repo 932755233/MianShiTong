@@ -41,7 +41,7 @@ export struct HomePage {
 
         // 打卡
         ClockIn({
-          clockCount: this.user.clockinNumbers
+          clockCount: this.user.clockinNumbers || 0
         })
           .onClick(() => {
 
