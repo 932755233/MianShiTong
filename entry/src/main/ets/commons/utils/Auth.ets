@@ -20,17 +20,27 @@ class Auth {
     return AppStorage.get<User>(UserStoreKey) || {} as User
   }
 
-  checkAuth(opt: router.RouterOptions) {
+  checkAuth(opt: router.RouterOptions | Function) {
     const user = auth.getUser()
     if (user.token) {
-      router.pushUrl(opt)
+      if (typeof opt === 'function') {
+        opt()
+      } else {
+        router.pushUrl(opt)
+      }
     } else {
-      const params = opt.params as Record<string, string> || {}
-      params.return_url = opt.url
-      router.pushUrl({
-        url: 'pages/LoginPage',
-        params: params
-      })
+      if (typeof opt === 'function') {
+        router.pushUrl({
+          url: 'pages/LoginPage'
+        })
+      } else {
+        const params = opt.params as Record<string, string> || {}
+        params.return_url = opt.url
+        router.pushUrl({
+          url: 'pages/LoginPage',
+          params: params
+        })
+      }
     }
   }
 }

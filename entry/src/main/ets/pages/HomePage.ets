@@ -1,7 +1,9 @@
 import { ClockIn, SearchBox, MyCalendar } from '../commons/components'
-import { UserStoreKey } from '../commons/utils/Auth'
+import { auth, UserStoreKey } from '../commons/utils/Auth'
 import { User } from '../model'
 import { HomeCategroy } from '../views/home/HomeCategroy'
+import { PromptAction } from '@ohos.arkui.UIContext'
+import { promptAction } from '@kit.ArkUI'
 
 @Component
 export struct HomePage {
@@ -32,6 +34,13 @@ export struct HomePage {
         Image($r('app.media.ic_home_scan'))
           .width(24)
           .aspectRatio(1)
+          .onClick(() => {
+            auth.checkAuth(() => {
+              promptAction.showToast({
+                message: '扫码成功'
+              })
+            })
+          })
 
         // 搜索框
         SearchBox({
