@@ -3,7 +3,7 @@ import { PromptAction } from '@ohos.arkui.UIContext'
 import { promptAction, router } from '@kit.ArkUI'
 import { http, logger } from '../commons/utils'
 import { LoginParams, User } from '../model'
-import { auth } from '../commons/utils/Auth'
+import { auth, UserStoreKey } from '../commons/utils/Auth'
 import { emitter } from '@kit.BasicServicesKit'
 
 @Entry
@@ -59,9 +59,17 @@ struct LoginPage {
     // 发送 - 线程内 - eventHub
     // getContext().eventHub.emit('13166669999')
     // 发送 - 线程间 - emitter
-    emitter.emit('13166669999')
+    emitter.emit(UserStoreKey)
+    const params = router.getParams() as Record<string, string>
+    if (params) {
+      router.replaceUrl({
+        url: params.return_url,
+        params: params
+      })
+    } else {
+      router.back()
+    }
 
-    router.back()
   }
 
   build() {

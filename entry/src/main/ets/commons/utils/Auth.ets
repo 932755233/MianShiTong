@@ -1,4 +1,5 @@
 import { User } from "../../model"
+import { router } from "@kit.ArkUI"
 
 // 持久化标识:常量
 export const UserStoreKey = 'UserStoreKey'
@@ -17,6 +18,20 @@ class Auth {
   // 访问
   getUser() {
     return AppStorage.get<User>(UserStoreKey) || {} as User
+  }
+
+  checkAuth(opt: router.RouterOptions) {
+    const user = auth.getUser()
+    if (user.token) {
+      router.pushUrl(opt)
+    } else {
+      const params = opt.params as Record<string, string> || {}
+      params.return_url = opt.url
+      router.pushUrl({
+        url: 'pages/LoginPage',
+        params: params
+      })
+    }
   }
 }
 

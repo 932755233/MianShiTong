@@ -4,6 +4,7 @@ import { SkeletonItem } from '../../commons/components/SkeletonItem'
 import { http } from '../../commons/utils'
 import { SortType } from '../../model'
 import { emitter } from '@kit.BasicServicesKit'
+import { UserStoreKey } from '../../commons/utils/Auth'
 
 export interface QuestionType {
   id: number
@@ -61,7 +62,7 @@ export struct HomeCategroy {
     //   this.getQuestionTypeList()
     // })
     // 接收 - 线程间 - emitter
-    emitter.on('13166669999', () => {
+    emitter.on(UserStoreKey, () => {
       this.getQuestionTypeList()
     })
 
