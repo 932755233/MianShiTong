@@ -1,4 +1,4 @@
-import { PageData, QuestionItem, QuestionListParams, SortType } from '../../model'
+import { PageData, QuestionItem, QuestionListParams, QuestionPageParams, SortType } from '../../model'
 import { http } from '../utils'
 import { QuestionItemComp } from './QuestionItemComp'
 import { router } from '@kit.ArkUI'
@@ -147,7 +147,11 @@ export struct QuestionListComp {
                 // })
                 // 鉴权 - 跳转页面
                 auth.checkAuth({
-                  url: 'pages/QuestionPage'
+                  url: 'pages/QuestionPage',
+                  params: {
+                    item: item,
+                    list: this.list
+                  } as QuestionPageParams
                 })
               })
           }

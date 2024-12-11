@@ -28,8 +28,8 @@ export struct LevelTag {
   build() {
     // 新建tag文件
     Row() {
-      Text(infoMap[this.difficulty].text)
-        .fontColor(infoMap[this.difficulty].color)
+      Text(this.text === '' ? infoMap[this.difficulty].text : this.text)
+        .fontColor(this.color === '' ? infoMap[this.difficulty].color : this.color)
         .fontSize(10)
         .padding({
           right: 6,
